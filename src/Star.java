@@ -1,6 +1,9 @@
+import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
-public class Star {
+public class Star implements Serializable {
+    private static final long serialVersionUID = 6337669437643697441L;
     private String name;
     private String polkola;
     private String gwiazdozbior;
@@ -104,7 +107,21 @@ public class Star {
         this.masa = masa;
     }
 
+
+    @Override
+    public String toString() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        String formattednumber = decimalFormat.format(this.deklinacja);
+        return "Star name:" + this.name +
+                "\n Star position:" + this.polkola +
+                "\n Star constellation:" + this.gwiazdozbior +
+                "\n Star catalog name:" + this.catalogName +
+                 "\nStar Declinatiom:" + formattednumber;
+    }
+
+
     public static class StarBuilder {
+
         private Star star;
         private static int catalogIndex, i;
 
@@ -118,6 +135,8 @@ public class Star {
             setPolkola();
             setConstellation();
             setCatalogName();
+//            setDeklinacja();
+            setDeklinationByString();
             showStar();
         }
 
@@ -131,6 +150,7 @@ public class Star {
                             "\n Star position: " + star.polkola +
                             "\n Star constellation: " + star.gwiazdozbior +
                             "\n Star catalog name: " + star.catalogName);
+            System.out.printf("Star Declinatiom: " + "%,.2f", star.deklinacja);
             return this;
         }
 
@@ -169,8 +189,81 @@ public class Star {
         }
 
         public StarBuilder setCatalogName() {
-            star.catalogName = star.getGwiazdozbior().concat(GreekAlphabet.MU.getGreekAlphabet(catalogIndex));
+            star.catalogName = GreekAlphabet.MU.getGreekAlphabet(catalogIndex).concat(" ").concat(star.getGwiazdozbior());
             i = catalogIndex++;
+            return this;
+        }
+
+        //Do Ustalenie którą metode zostawiamy, tutaj kazdą współrzędną uzytkownik podaje z palca
+        public StarBuilder setDeklinacja() {
+            int stopnie;
+            int minuty;
+            double sekundy;
+            System.out.println("Proszę podać współżedne gwiazdy do obliczenia Deklinacji: ");
+            Scanner scanner = new Scanner(System.in);
+            try {
+                do {
+                    System.out.println("Podaj stopnie");
+                    stopnie = scanner.nextInt();
+                    if (stopnie > -90 && stopnie < 90) {
+                        System.out.println("Dziekuje!");
+                    } else {
+                        System.out.println("Podana watość jest nieprawidłowa! \nProsze podać prawidłową wartość od -90 do 90");
+                    }
+                } while (stopnie < -90 || stopnie > 90);
+                do {
+                    System.out.println("Podaj minuty");
+                    minuty = scanner.nextInt();
+                    if (minuty > 0 && minuty < 60) {
+                        System.out.println("Dziekuje!");
+                    } else {
+                        System.out.println("Podana watość jest nieprawidłowa! \nProsze podać prawidłową wartość od 0 do 60");
+                    }
+                } while (minuty < 0 || minuty > 60);
+                do {
+                    System.out.println("Podaj sekundy");
+                    sekundy = scanner.nextDouble();
+                    if (sekundy > 0 && sekundy < 60) {
+                        System.out.println("Dziekuje!");
+                    } else {
+                        System.out.println("Podana watość jest nieprawidłowa! \nProsze podać prawidłową wartość od 0 do 60");
+                    }
+                } while (sekundy < 0 || sekundy > 60);
+                double deklinacja = stopnie + (minuty / 60) + (sekundy / 3600);
+                if (star.getPolkola().equals("PN"))
+                    star.deklinacja = deklinacja;
+                else if (star.getPolkola().equals("PD"))
+                    star.deklinacja = -deklinacja;
+            } catch (Exception e) {
+                System.out.println("Podana wartość współrzędnych jest błędna!");
+            }
+            return this;
+        }
+
+        //A w tej niżej przyjmujesz od uzytkownika string i na nim działasz
+        public StarBuilder setDeklinationByString() {
+            Scanner scanner = new Scanner(System.in);
+            int stopnie = -100;
+            int minuty = -100;
+            double sekundy = -100;
+            do {
+                System.out.println("Prosze podać współrzedne: [xx,yy,zz.zz] ");
+                String userInput = scanner.nextLine();
+                String[] coordinate = userInput.split(",");
+                try {
+                    stopnie = Integer.valueOf(coordinate[0]);
+                    minuty = Integer.valueOf(coordinate[1]);
+                    sekundy = Double.valueOf(coordinate[2]);
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Dane zostały podane nieprawidłowo, prosze spróbowac ponownie!");
+                }
+            }
+            while (stopnie < -90 || stopnie > 90 || minuty < 0 || minuty > 60 || sekundy < 0 || sekundy > 60);
+            double deklinacja = stopnie + (minuty / 60) + (sekundy / 3600);
+            if (star.getPolkola().equals("PN"))
+                star.deklinacja = deklinacja;
+            else if (star.getPolkola().equals("PD"))
+                star.deklinacja = -deklinacja;
             return this;
         }
 
