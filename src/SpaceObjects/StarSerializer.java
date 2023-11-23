@@ -1,3 +1,4 @@
+package SpaceObjects;
 import java.io.*;
 public class StarSerializer {
     public static void serializerStar(String fileName, Serializable object)
@@ -5,7 +6,7 @@ public class StarSerializer {
         try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName)))
         {
             outputStream.writeObject(object);
-            System.out.println("Dane zostały zserializowane i zapisane do pliku" + fileName);
+            System.out.println("Dane zostały zserializowane i zapisane do pliku " + fileName);
         }catch(Exception e){
             e.printStackTrace();
         }

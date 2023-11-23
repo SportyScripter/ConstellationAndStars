@@ -1,3 +1,4 @@
+package SpaceObjects;
 public enum GreekAlphabet {
     //Write greek alphabet here
     ALPHA("Alpha",  1),
