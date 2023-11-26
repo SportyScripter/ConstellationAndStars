@@ -3,6 +3,7 @@ package SpaceObjects;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
 import java.util.List;
+import javax.swing.*;
 import javax.xml.xpath.XPath;
 import java.io.*;
 import java.sql.ClientInfoStatus;
@@ -11,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static java.lang.System.in;
-import static java.lang.System.load;
+import static java.lang.System.*;
 
 
 public class Star implements Serializable {
@@ -21,7 +21,7 @@ public class Star implements Serializable {
     private String name; //Done
     private String hemisphere; //Done
     private String constellation; //Done
-    private String catalogName;
+    private String catalogName; //Done
     private Declination declination; //Done
     private RightAscension rightAscension; //Done
     private Double observedStellarMagnitude; //Done
@@ -29,6 +29,15 @@ public class Star implements Serializable {
     private Double distance; //Done
     private Double temperatures; //Done
     private Double mass; //Done
+
+    public int getCatalogIndex() {
+        return catalogIndex;
+    }
+
+    public void setCatalogIndex(int catalogIndex) {
+        this.catalogIndex = catalogIndex;
+    }
+
     private int catalogIndex;
 
     private Star() {
@@ -38,7 +47,7 @@ public class Star implements Serializable {
         return observedStellarMagnitude;
     }
 
-    public void setObservedStellarMagnitude(Double observedStellarMagnitude) {
+    private void setObservedStellarMagnitude(Double observedStellarMagnitude) {
         this.observedStellarMagnitude = observedStellarMagnitude;
     }
 
@@ -46,7 +55,7 @@ public class Star implements Serializable {
         return rightAscension;
     }
 
-    public void setRightAscension(RightAscension rightAscension) {
+    private void setRightAscension(RightAscension rightAscension) {
         this.rightAscension = rightAscension;
     }
 
@@ -54,7 +63,7 @@ public class Star implements Serializable {
         return declination;
     }
 
-    public void setDeclination(Declination declination) {
+    private void setDeclination(Declination declination) {
         this.declination = declination;
     }
 
@@ -62,7 +71,7 @@ public class Star implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -70,7 +79,7 @@ public class Star implements Serializable {
         return hemisphere;
     }
 
-    public void setHemisphere(String hemisphere) {
+    private void setHemisphere(String hemisphere) {
         this.hemisphere = hemisphere;
     }
 
@@ -78,7 +87,7 @@ public class Star implements Serializable {
         return constellation;
     }
 
-    public void setConstellation(String constellation) {
+    private void setConstellation(String constellation) {
         this.constellation = constellation;
     }
 
@@ -86,7 +95,7 @@ public class Star implements Serializable {
         return catalogName;
     }
 
-    public void setCatalogName(String catalogName) {
+    private void setCatalogName(String catalogName) {
         this.catalogName = catalogName;
     }
 
@@ -94,7 +103,7 @@ public class Star implements Serializable {
         return absoluteStellarMagnitude;
     }
 
-    public void setabsoluteStellarMagnitude(Double absoluteStellarMagnitude) {
+    private void setabsoluteStellarMagnitude(Double absoluteStellarMagnitude) {
         this.absoluteStellarMagnitude = absoluteStellarMagnitude;
     }
 
@@ -102,7 +111,7 @@ public class Star implements Serializable {
         return distance;
     }
 
-    public void setdistance(Double distance) {
+    private void setdistance(Double distance) {
         this.distance = distance;
     }
 
@@ -110,7 +119,7 @@ public class Star implements Serializable {
         return temperatures;
     }
 
-    public void settemperatures(Double temperatures) {
+    private void settemperatures(Double temperatures) {
         this.temperatures = temperatures;
     }
 
@@ -118,7 +127,7 @@ public class Star implements Serializable {
         return mass;
     }
 
-    public void setmass(Double mass) {
+    private void setmass(Double mass) {
         this.mass = mass;
     }
 
@@ -142,19 +151,6 @@ public class Star implements Serializable {
     static class StarBuilder implements Serializable {
         private static final long serialVersionUID = -9223365651070458532L;
         private final Star star;
-        private static int catalogIndex, i;
-
-        public static int getCatalogIndex() {
-            return catalogIndex;
-        }
-
-        private static void setCatalogIndex(int catalogIndex) {
-            StarBuilder.catalogIndex = catalogIndex;
-        }
-
-        int getI() {
-            return i;
-        }
 
         public StarBuilder(String name, String hemisphere, String constellation, Declination declination, RightAscension rightAscension, double observedStellarMagnitude, double distance, double temperature, double mass) throws IOException, ClassNotFoundException {
             star = new Star();
@@ -172,14 +168,8 @@ public class Star implements Serializable {
             AppStart.listOfStar.add(this.star);
         }
 
-
         public Star build() {
             return star;
-        }
-
-        public StarBuilder showStar() {
-            System.out.println(star);
-            return this;
         }
 
         public void setName(String name) {
@@ -202,19 +192,41 @@ public class Star implements Serializable {
         }
 
         public void setCatalogName() throws IOException, ClassNotFoundException {
-            i = 0;
+            int i = 0;
             if (!AppStart.listOfStar.isEmpty()) {
                 for (Star deserializerStar : AppStart.listOfStar) {
                     if (deserializerStar.constellation.equals(star.getConstellation())) {
                         i++;
                     }
                 }
-                star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
-                setCatalogIndex(i);
+                if (star.getObservedStellarMagnitude() < findTheBrightestStar()) {
+                    star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(0).concat(" ").concat(star.constellation);
+                    star.catalogIndex = 0;
+                    for (Star deserializerStar : AppStart.listOfStar) {
+                        if (deserializerStar.constellation.equals(star.getConstellation())) {
+                            deserializerStar.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(deserializerStar.getCatalogIndex() + 1).concat(" ").concat(deserializerStar.constellation);
+                            deserializerStar.catalogIndex = deserializerStar.getCatalogIndex() + 1;
+                        }
+                    }
+                } else {
+                    star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
+                    star.catalogIndex = i;
+                }
             } else {
                 star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
-                setCatalogIndex(i);
+                star.catalogIndex = i;
             }
+        }
+
+        private double findTheBrightestStar() {
+            double tempBrightesValue = 15.00;
+            for (Star brightesStar : AppStart.listOfStar) {
+                if (brightesStar.constellation.equals(star.getConstellation())) {
+                    if (tempBrightesValue > brightesStar.observedStellarMagnitude)
+                        tempBrightesValue = brightesStar.observedStellarMagnitude;
+                }
+            }
+            return tempBrightesValue;
         }
 
         public void SetDeclination(Declination declination) {
@@ -288,13 +300,5 @@ public class Star implements Serializable {
                 star.mass = mass;
             }
         }
-
-        public Boolean ChecFileIsEmpty(String path) {
-            File file = new File(path);
-            if (file.length() == 0) {
-                return false;
-            } else return true;
-        }
-
     }
 }

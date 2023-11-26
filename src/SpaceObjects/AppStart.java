@@ -42,15 +42,19 @@ public class AppStart {
     public void showCatalgoName() throws IOException, ClassNotFoundException {
         ObjectInputStream newInput = new ObjectInputStream(new FileInputStream(fileName));
         for (Star star : AppStart.listOfStar) {
-            System.out.println(star.getCatalogName());
+            System.out.println("Star CatalogName:" +star.getCatalogName() + "Star Brightest:"+ star.getObservedStellarMagnitude());
+
         }
     }
     public void addStarsToChecActionProgram() throws IOException, ClassNotFoundException {
-        new Star.StarBuilder("DCH7821", "PN", "Wolazer", new Declination(75, 15, 45.44), new RightAscension(5, 10, 15), 5, 978, 2500, 46).build();
-        new Star.StarBuilder("DIM2456", "PD", "Wolazer", new Declination(-60, 32, 15.17), new RightAscension(20, 50, 22), -10, 652, 3750, 15).build();
-        new Star.StarBuilder("RYB1234", "PN", "Wolazer", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
-        new Star.StarBuilder("RYB1234", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
-        new Star.StarBuilder("RYB1234", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
-        new Star.StarBuilder("RYB1234", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
+        new Star.StarBuilder("DCH7821", "PN", "Wolazer", new Declination(75, 15, 45.44), new RightAscension(5, 10, 15), -5, 978, 2500, 46).build(); //Gamma
+        new Star.StarBuilder("POR8643", "PN", "Wolazer", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), -1, 326, 4000, 30).build(); // Beta
+        new Star.StarBuilder("JUO3241", "PD", "Wolazer", new Declination(-60, 32, 15.17), new RightAscension(20, 50, 22), -6, 652, 3750, 15).build(); // Alpha
+        new Star.StarBuilder("HAB9999", "PD", "Wolazer", new Declination(-60, 32, 15.17), new RightAscension(20, 50, 22), 3, 652, 3750, 15).build(); // Delta
+        new Star.StarBuilder("COP0764", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 0, 326, 4000, 30).build(); //Gamma
+        new Star.StarBuilder("LOK7654", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), -8, 326, 4000, 30).build(); //Delta
+        new Star.StarBuilder("XYZ0000", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), -10, 326, 4000, 30).build(); //Beta
+        new Star.StarBuilder("POL6666", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), -2, 326, 4000, 30).build(); //Alpha
+        new Star.StarBuilder("VCX8790", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), -12, 326, 4000, 30).build();// Epsilon
     }
 }
