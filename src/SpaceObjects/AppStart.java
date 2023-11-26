@@ -1,7 +1,6 @@
 package SpaceObjects;
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,18 +8,15 @@ import java.util.List;
 public class AppStart {
     static String fileName = "star.dat";
     static List<Star> listOfStar = new ArrayList<>();
-    public AppStart()
-    {
-        if (ChecFileIsEmpty(fileName))
+    public AppStart() throws IOException, ClassNotFoundException {
+        if (!ChecFileIsEmpty(fileName))
         {
-
+            listOfStar =(List<Star>) StarSerializer.deserializeStar(fileName);
         }
-        else
-        {
-            listOfStar = StarSerializer.deserializeStar(fileName);
-        }
-
+//        showMenu();
+        addStarsToChecActionProgram();
         StarSerializer.serializerStar(fileName, (Serializable) listOfStar);
+        showCatalgoName();
 
     }
     public void showMenu()
@@ -42,5 +38,19 @@ public class AppStart {
             return true;
         }
         else return false;
+    }
+    public void showCatalgoName() throws IOException, ClassNotFoundException {
+        ObjectInputStream newInput = new ObjectInputStream(new FileInputStream(fileName));
+        for (Star star : AppStart.listOfStar) {
+            System.out.println(star.getCatalogName());
+        }
+    }
+    public void addStarsToChecActionProgram() throws IOException, ClassNotFoundException {
+        new Star.StarBuilder("DCH7821", "PN", "Wolazer", new Declination(75, 15, 45.44), new RightAscension(5, 10, 15), 5, 978, 2500, 46).build();
+        new Star.StarBuilder("DIM2456", "PD", "Wolazer", new Declination(-60, 32, 15.17), new RightAscension(20, 50, 22), -10, 652, 3750, 15).build();
+        new Star.StarBuilder("RYB1234", "PN", "Wolazer", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
+        new Star.StarBuilder("RYB1234", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
+        new Star.StarBuilder("RYB1234", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
+        new Star.StarBuilder("RYB1234", "PN", "Orfa", new Declination(45, 52, 30.23), new RightAscension(13, 35, 45), 10, 326, 4000, 30).build();
     }
 }

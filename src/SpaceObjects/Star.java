@@ -1,6 +1,7 @@
 package SpaceObjects;
 
 import org.w3c.dom.css.ElementCSSInlineStyle;
+
 import java.util.List;
 import javax.xml.xpath.XPath;
 import java.io.*;
@@ -9,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 import static java.lang.System.in;
 import static java.lang.System.load;
 
@@ -28,9 +30,10 @@ public class Star implements Serializable {
     private Double temperatures; //Done
     private Double mass; //Done
     private int catalogIndex;
+
     private Star() {
     }
-    static List<Star> myListOfStar = new ArrayList<>();
+
     public Double getObservedStellarMagnitude() {
         return observedStellarMagnitude;
     }
@@ -136,18 +139,18 @@ public class Star implements Serializable {
                 "\nStar Mass: " + this.mass + "\n";
     }
 
-     static class StarBuilder implements Serializable {
+    static class StarBuilder implements Serializable {
         private static final long serialVersionUID = -9223365651070458532L;
         private final Star star;
-         private static int catalogIndex, i;
+        private static int catalogIndex, i;
 
-         public static int getCatalogIndex() {
-             return catalogIndex;
-         }
+        public static int getCatalogIndex() {
+            return catalogIndex;
+        }
 
-         private static void setCatalogIndex(int catalogIndex) {
-             StarBuilder.catalogIndex = catalogIndex;
-         }
+        private static void setCatalogIndex(int catalogIndex) {
+            StarBuilder.catalogIndex = catalogIndex;
+        }
 
         int getI() {
             return i;
@@ -166,15 +169,8 @@ public class Star implements Serializable {
             SetTemperatures(temperature);
             SetMass(mass);
             setCatalogName();
-            if (ChecFileIsEmpty("star.dat"))
-            {
-            myListOfStar = (List<Star>) StarSerializer.deserializeStar("star.dat");
-            }
-            myListOfStar.add(this.star);
-            StarSerializer.serializerStar("star.dat",(Serializable) myListOfStar);
+            AppStart.listOfStar.add(this.star);
         }
-
-
 
 
         public Star build() {
@@ -205,23 +201,17 @@ public class Star implements Serializable {
             star.constellation = constellation;
         }
 
-        public void setCatalogName() throws IOException, ClassNotFoundException
-        {
-            i=0;
-            if (ChecFileIsEmpty("star.dat"))
-            {
-//            List<Star> loadStar = new ArrayList<>();
-//            loadStar = (List<Star>) StarSerializer.deserializeStar("star.dat");
-            for(Star deserializerStar : AppStart.listOfStar) {
-                if (deserializerStar.constellation.equals(star.getConstellation())) {
-                    i++;
+        public void setCatalogName() throws IOException, ClassNotFoundException {
+            i = 0;
+            if (!AppStart.listOfStar.isEmpty()) {
+                for (Star deserializerStar : AppStart.listOfStar) {
+                    if (deserializerStar.constellation.equals(star.getConstellation())) {
+                        i++;
+                    }
                 }
-            }
                 star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
-            setCatalogIndex(i);
-            }
-            else
-            {
+                setCatalogIndex(i);
+            } else {
                 star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
                 setCatalogIndex(i);
             }
@@ -298,14 +288,12 @@ public class Star implements Serializable {
                 star.mass = mass;
             }
         }
-        public Boolean ChecFileIsEmpty(String path)
-        {
+
+        public Boolean ChecFileIsEmpty(String path) {
             File file = new File(path);
-            if(file.length() == 0)
-            {
+            if (file.length() == 0) {
                 return false;
-            }
-            else return true;
+            } else return true;
         }
 
     }
