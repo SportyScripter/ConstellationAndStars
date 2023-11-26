@@ -1,9 +1,16 @@
 package SpaceObjects;
 
-import java.io.Serial;
-import java.io.Serializable;
+import org.w3c.dom.css.ElementCSSInlineStyle;
+import java.util.List;
+import javax.xml.xpath.XPath;
+import java.io.*;
+import java.sql.ClientInfoStatus;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import static java.lang.System.in;
+import static java.lang.System.load;
 
 
 public class Star implements Serializable {
@@ -20,10 +27,10 @@ public class Star implements Serializable {
     private Double distance; //Done
     private Double temperatures; //Done
     private Double mass; //Done
-
+    private int catalogIndex;
     private Star() {
     }
-
+    static List<Star> myListOfStar = new ArrayList<>();
     public Double getObservedStellarMagnitude() {
         return observedStellarMagnitude;
     }
@@ -129,17 +136,24 @@ public class Star implements Serializable {
                 "\nStar Mass: " + this.mass + "\n";
     }
 
-
-    public static class StarBuilder {
-
+     static class StarBuilder implements Serializable {
+        private static final long serialVersionUID = -9223365651070458532L;
         private final Star star;
-        private static int catalogIndex, i;
+         private static int catalogIndex, i;
+
+         public static int getCatalogIndex() {
+             return catalogIndex;
+         }
+
+         private static void setCatalogIndex(int catalogIndex) {
+             StarBuilder.catalogIndex = catalogIndex;
+         }
 
         int getI() {
             return i;
         }
 
-        public StarBuilder(String name, String hemisphere, String constellation, Declination declination, RightAscension rightAscension, double observedStellarMagnitude, double distance, double temperature, double mass) {
+        public StarBuilder(String name, String hemisphere, String constellation, Declination declination, RightAscension rightAscension, double observedStellarMagnitude, double distance, double temperature, double mass) throws IOException, ClassNotFoundException {
             star = new Star();
             setName(name);
             setHemisphere(hemisphere);
@@ -152,8 +166,16 @@ public class Star implements Serializable {
             SetTemperatures(temperature);
             SetMass(mass);
             setCatalogName();
-//            showStar();
+            if (ChecFileIsEmpty("star.dat"))
+            {
+            myListOfStar = (List<Star>) StarSerializer.deserializeStar("star.dat");
+            }
+            myListOfStar.add(this.star);
+            StarSerializer.serializerStar("star.dat",(Serializable) myListOfStar);
         }
+
+
+
 
         public Star build() {
             return star;
@@ -164,36 +186,48 @@ public class Star implements Serializable {
             return this;
         }
 
-        public StarBuilder setName(String name) {
+        public void setName(String name) {
             while (!name.matches("[A-Z]{3}[0-9]{4}")) {
                 System.out.println("Wrong star name. Try again: ");
             }
             star.name = name;
-            return this;
         }
 
-        public StarBuilder setHemisphere(String hemisphere) {
+        public void setHemisphere(String hemisphere) {
             if (hemisphere.equals("PN") || hemisphere.equals("PD")) {
                 star.hemisphere = hemisphere;
             } else {
                 System.out.println("Wrong star position. Try again: ");
             }
-            return this;
         }
 
-        public StarBuilder setConstellation(String constellation) {
+        public void setConstellation(String constellation) {
             star.constellation = constellation;
-            return this;
         }
 
-        //TODO ZROBIC NAZWE KATOLOGOWA NA PODSTAWIE NAZWY GWIAZDOZBIORU I ALFABETU GRECKIEGO
-        public StarBuilder setCatalogName() {
-            star.catalogName = GreekAlphabet.MU.getGreekAlphabet(catalogIndex).concat(" ").concat(star.getConstellation());
-            i = catalogIndex++;
-            return this;
+        public void setCatalogName() throws IOException, ClassNotFoundException
+        {
+            i=0;
+            if (ChecFileIsEmpty("star.dat"))
+            {
+//            List<Star> loadStar = new ArrayList<>();
+//            loadStar = (List<Star>) StarSerializer.deserializeStar("star.dat");
+            for(Star deserializerStar : AppStart.listOfStar) {
+                if (deserializerStar.constellation.equals(star.getConstellation())) {
+                    i++;
+                }
+            }
+                star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
+            setCatalogIndex(i);
+            }
+            else
+            {
+                star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
+                setCatalogIndex(i);
+            }
         }
 
-        public StarBuilder SetDeclination(Declination declination) {
+        public void SetDeclination(Declination declination) {
             if (star.getHemisphere().equals("PN")) {
                 if (declination.getXx() < 0 || declination.getXx() > 90) {
                     throw new IllegalArgumentException("Deklinacja musi być z przedziału 0-90");
@@ -215,10 +249,9 @@ public class Star implements Serializable {
                     star.declination = declination;
                 }
             }
-            return this;
         }
 
-        public StarBuilder SetRightAscenios(RightAscension rightAscension) {
+        public void SetRightAscenios(RightAscension rightAscension) {
             if (rightAscension.getXx() > 24 || rightAscension.getXx() < 0) {
                 throw new IllegalArgumentException("Rekatascensja musi byc z przedziału 00-24");
             } else if (rightAscension.getYy() > 60 || rightAscension.getYy() < 0) {
@@ -228,50 +261,52 @@ public class Star implements Serializable {
             } else if (rightAscension.getXx() > 0 && rightAscension.getXx() < 24) {
                 star.rightAscension = rightAscension;
             }
-            return this;
         }
 
-        public StarBuilder SetObservedStellarMagnitude(double stellarMagnitude) {
+        public void SetObservedStellarMagnitude(double stellarMagnitude) {
             if (stellarMagnitude >= -26.74 && stellarMagnitude <= 15.00) {
                 star.observedStellarMagnitude = stellarMagnitude;
             } else {
                 throw new IllegalArgumentException("Podana obserwowana wielkość gwiazdy jest poza zakresem");
             }
-            return this;
         }
 
-        public StarBuilder SetDistnce(double distance) {
+        public void SetDistnce(double distance) {
             if (distance < 0) {
                 throw new IllegalArgumentException("Wartość nie może być ujemna");
             } else {
                 star.distance = distance;
             }
-            return this;
         }
 
-        public StarBuilder SetAbsoluteStellarMagnitude() {
+        public void SetAbsoluteStellarMagnitude() {
             star.absoluteStellarMagnitude = star.getObservedStellarMagnitude() - 5 * Math.log10(star.getdistance() / 3.26) + 5;
-            return this;
         }
 
-        public StarBuilder SetTemperatures(double temperatures) {
+        public void SetTemperatures(double temperatures) {
             if (temperatures <= 2000) {
                 throw new IllegalArgumentException("Podana temperatura jest za niska!");
             } else {
                 star.temperatures = temperatures;
             }
-            return this;
         }
 
-        public StarBuilder SetMass(double mass) {
+        public void SetMass(double mass) {
             if (mass > 50 && mass < 0.1) {
                 throw new IllegalArgumentException("Podana mass jest nieprawidłowa, prosze podać mase w zakresie [0.1-50.0]");
             } else {
                 star.mass = mass;
             }
-            return this;
         }
-
+        public Boolean ChecFileIsEmpty(String path)
+        {
+            File file = new File(path);
+            if(file.length() == 0)
+            {
+                return false;
+            }
+            else return true;
+        }
 
     }
 }
