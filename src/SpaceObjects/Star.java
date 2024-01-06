@@ -29,6 +29,10 @@ public class Star implements Serializable {
     private Double distance; //Done
     private Double temperatures; //Done
     private Double mass; //Done
+    private int catalogIndex ;
+
+    private Star() {
+    }
 
     public int getCatalogIndex() {
         return catalogIndex;
@@ -36,11 +40,6 @@ public class Star implements Serializable {
 
     public void setCatalogIndex(int catalogIndex) {
         this.catalogIndex = catalogIndex;
-    }
-
-    private int catalogIndex;
-
-    private Star() {
     }
 
     public Double getObservedStellarMagnitude() {
@@ -95,7 +94,7 @@ public class Star implements Serializable {
         return catalogName;
     }
 
-    private void setCatalogName(String catalogName) {
+    public void setCatalogName(String catalogName) {
         this.catalogName = catalogName;
     }
 
@@ -136,15 +135,15 @@ public class Star implements Serializable {
     public String toString() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         return "Star name: " + this.name +
-                "\nStar position: " + this.hemisphere +
+                "\nStar hemisphere: " + this.hemisphere +
                 "\nStar constellation: " + this.constellation +
                 "\nStar catalog name: " + this.catalogName +
                 "\nStar Declinatiom: " + this.declination.getXx() + "°" + this.declination.getYy() + "'" + decimalFormat.format(this.declination.getZz()) +
                 "\nStar Right Ascension: " + this.rightAscension.getXx() + "°" + this.rightAscension.getYy() + "'" + decimalFormat.format(this.rightAscension.getZz()) +
-                "\nStar Distance: " + this.distance + "Light years" +
+                "\nStar Distance: " + this.distance + " [Light years]" +
                 "\nStar Observed stellar magnitude: " + this.observedStellarMagnitude + " [jednostek magnitudo] " +
                 "\nStar Absolute stellar magnitude: " + this.absoluteStellarMagnitude + " [wartość magnitudo]" +
-                "\nStar Temperature: " + this.temperatures + "°" +
+                "\nStar Temperature: " + this.temperatures + "°C" +
                 "\nStar Mass: " + this.mass + "\n";
     }
 
@@ -193,28 +192,28 @@ public class Star implements Serializable {
 
         public void setCatalogName() throws IOException, ClassNotFoundException {
             int i = 0;
-            if (!AppStart.listOfStar.isEmpty()) {
+            if (!AppStart.listOfStar.isEmpty()) { // jesli lista nie jest pusta
                 for (Star deserializerStar : AppStart.listOfStar) {
-                    if (deserializerStar.constellation.equals(star.getConstellation())) {
+                    if (deserializerStar.constellation.equals(star.getConstellation())) { //wyszukanie wszystkich gwiazd w danym gwiazdozbiorze
                         i++;
                     }
                 }
                 if (star.getObservedStellarMagnitude() < findTheBrightestStar()) {
                     star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(0).concat(" ").concat(star.constellation);
-                    star.catalogIndex = 0;
+                    star.setCatalogIndex(0); // ustawienie najjasniejszej gwiazdy na index 0
                     for (Star deserializerStar : AppStart.listOfStar) {
                         if (deserializerStar.constellation.equals(star.getConstellation())) {
                             deserializerStar.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(deserializerStar.getCatalogIndex() + 1).concat(" ").concat(deserializerStar.constellation);
-                            deserializerStar.catalogIndex = deserializerStar.getCatalogIndex() + 1;
+                            deserializerStar.setCatalogIndex(deserializerStar.getCatalogIndex() + 1);  // zmiana indeksu katalogu na +1
                         }
                     }
                 } else {
-                    star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
-                    star.catalogIndex = i;
+                    star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation); // jeśli gwiazda nie jest najjaśniejsza ustaw katalog indeks jako ostatni
+                    star.setCatalogIndex(i);
                 }
-            } else {
+            } else { // jesli lista jest pusta
                 star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
-                star.catalogIndex = i;
+                star.setCatalogIndex(i); // ustaw najjaśniejszą gwiazdę na index 0
             }
         }
 
@@ -273,7 +272,7 @@ public class Star implements Serializable {
             }
         }
 
-        public void SetDistnce(double distance) {
+        public void SetDistnce(double distance) { // ustala odleglosc w latach swietlnych
             if (distance < 0) {
                 throw new IllegalArgumentException("Wartość nie może być ujemna");
             } else {
@@ -281,8 +280,8 @@ public class Star implements Serializable {
             }
         }
 
-        public void SetAbsoluteStellarMagnitude() {
-            star.absoluteStellarMagnitude = star.getObservedStellarMagnitude() - 5 * Math.log10(star.getdistance() / 3.26) + 5;
+        public void SetAbsoluteStellarMagnitude() { // oblicza absolutna wielkosc gwiazdy
+            star.absoluteStellarMagnitude = star.getObservedStellarMagnitude() - (5 * Math.log10(star.getdistance() / 3.26)) + 5;
         }
 
         public void SetTemperatures(double temperatures) {
@@ -300,5 +299,6 @@ public class Star implements Serializable {
                 star.mass = mass;
             }
         }
+
     }
 }
