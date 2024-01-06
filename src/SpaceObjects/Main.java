@@ -11,3 +11,4 @@ public class Main {
         AppStart start = new AppStart();
     }
 }
+//TODO Poprawic metode do obliczania masy gwiazdy w odnieseniu do masy słońca.
