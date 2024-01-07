@@ -1,53 +1,8 @@
 package SpaceObjects;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class StarRemover {
 
-
-    //    public static void DeleteStar(String GreekAlphabet, String ConstellationName) throws IOException, ClassNotFoundException {
-//      int counter = 1;
-//       for (Star star : AppStart.listOfStar) {
-//           String catalogName = GreekAlphabet.toUpperCase().concat(" ").concat(ConstellationName);
-//            if (star.getCatalogName().equals(catalogName)) {
-//                AppStart.listOfStar.remove(star);
-//                for (Star updateCatalogName : AppStart.listOfStar) {
-//                    if (updateCatalogName.getConstellation().equals(star.getConstellation())) {
-//
-//                        if(FindNewAlphaStar(ConstellationName).equals(updateCatalogName))
-//                        {
-//                            updateCatalogName.setCatalogName(updateCatalogName.getCatalogName().replace(SpaceObjects.GreekAlphabet.ALPHA.getGreekAlphabet(updateCatalogName.getCatalogIndex()), "Alpha"));
-//                        }
-//                        else
-//                        {
-//                            updateCatalogName.setCatalogName(SpaceObjects.GreekAlphabet.ALPHA.getGreekAlphabet(counter).concat(" ").concat(updateCatalogName.getConstellation()));
-//                            counter++;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    private static Star FindNewAlphaStar(String constellationName)
-//    {
-//        Star newAlpha = null;
-//        double temp = 15.00;
-//        for (Star star : AppStart.listOfStar)
-//        {
-//            if (star.getConstellation().equals(constellationName))
-//            {
-//                if (star.getObservedStellarMagnitude() < temp)
-//                {
-//                    temp = star.getObservedStellarMagnitude();
-//                    newAlpha = star;
-//                }
-//            }
-//        }
-//        return newAlpha;
-//    }
     public static void DeleteStar(String GreekAlphabet, String ConstellationName) throws IOException, ClassNotFoundException {
         int counter = 1;
         Star starToRemove = null;

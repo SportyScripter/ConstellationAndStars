@@ -29,9 +29,23 @@ public class Star implements Serializable {
     private Double distance; //Done
     private Double temperatures; //Done
     private Double mass; //Done
-    private int catalogIndex ;
+    private int catalogIndex;
+    static Scanner scanner = new Scanner(System.in);
 
     private Star() {
+    }
+
+    private Star(String name, String hemisphere, String constellation, Declination declination, RightAscension rightAscension, Double observedStellarMagnitude, Double absoluteStellarMagnitude, Double distance, Double temperatures, Double mass) {
+        this.name = name;
+        this.hemisphere = hemisphere;
+        this.constellation = constellation;
+        this.declination = declination;
+        this.rightAscension = rightAscension;
+        this.observedStellarMagnitude = observedStellarMagnitude;
+        this.absoluteStellarMagnitude = absoluteStellarMagnitude;
+        this.distance = distance;
+        this.temperatures = temperatures;
+        this.mass = mass;
     }
 
     public int getCatalogIndex() {
@@ -46,48 +60,12 @@ public class Star implements Serializable {
         return observedStellarMagnitude;
     }
 
-    private void setObservedStellarMagnitude(Double observedStellarMagnitude) {
-        this.observedStellarMagnitude = observedStellarMagnitude;
-    }
-
-    public RightAscension getRightAscension() {
-        return rightAscension;
-    }
-
-    private void setRightAscension(RightAscension rightAscension) {
-        this.rightAscension = rightAscension;
-    }
-
-    public Declination getDeclination() {
-        return declination;
-    }
-
-    private void setDeclination(Declination declination) {
-        this.declination = declination;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    private void setName(String name) {
-        this.name = name;
-    }
-
     public String getHemisphere() {
         return hemisphere;
     }
 
-    private void setHemisphere(String hemisphere) {
-        this.hemisphere = hemisphere;
-    }
-
     public String getConstellation() {
         return constellation;
-    }
-
-    private void setConstellation(String constellation) {
-        this.constellation = constellation;
     }
 
     public String getCatalogName() {
@@ -102,34 +80,17 @@ public class Star implements Serializable {
         return absoluteStellarMagnitude;
     }
 
-    private void setabsoluteStellarMagnitude(Double absoluteStellarMagnitude) {
-        this.absoluteStellarMagnitude = absoluteStellarMagnitude;
-    }
-
     public Double getdistance() {
         return distance;
-    }
-
-    private void setdistance(Double distance) {
-        this.distance = distance;
     }
 
     public Double gettemperatures() {
         return temperatures;
     }
 
-    private void settemperatures(Double temperatures) {
-        this.temperatures = temperatures;
-    }
-
     public Double getmass() {
         return mass;
     }
-
-    private void setmass(Double mass) {
-        this.mass = mass;
-    }
-
 
     @Override
     public String toString() {
@@ -149,45 +110,90 @@ public class Star implements Serializable {
 
     static class StarBuilder implements Serializable {
         private static final long serialVersionUID = -9223365651070458532L;
-        private final Star star;
+        private Star star;
 
-        public StarBuilder(String name, String hemisphere, String constellation, Declination declination, RightAscension rightAscension, double observedStellarMagnitude, double distance, double temperature, double mass) throws IOException, ClassNotFoundException {
-            star = new Star();
-            setName(name);
-            setHemisphere(hemisphere);
-            setConstellation(constellation);
-            SetDeclination(declination);
-            SetRightAscenios(rightAscension);
-            SetObservedStellarMagnitude(observedStellarMagnitude);
-            SetDistnce(distance);
-            SetAbsoluteStellarMagnitude();
-            SetTemperatures(temperature);
-            SetMass(mass);
-            setCatalogName();
-            AppStart.listOfStar.add(this.star);
+        public StarBuilder() {
+            build();
         }
 
-        public Star build() {
-            return star;
-        }
-
-        public void setName(String name) {
-            while (!name.matches("[A-Z]{3}[0-9]{4}")) {
-                System.out.println("Wrong star name. Try again: ");
-            }
-            star.name = name;
-        }
-
-        public void setHemisphere(String hemisphere) {
-            if (hemisphere.equals("PN") || hemisphere.equals("PD")) {
-                star.hemisphere = hemisphere;
-            } else {
-                System.out.println("Wrong star position. Try again: ");
+        public void build() {
+            try {
+                String name = setName();
+                String hemisphere = setHemisphere();
+                String constellation = setConstellation();
+                Declination declination1 = SetDeclination(hemisphere);
+                RightAscension rightAscension1 = SetRightAscenios();
+                Double observedStellarManitude = SetObservedStellarMagnitude();
+                Double distance = SetDistnce();
+                SetAbsoluteStellarMagnitude(observedStellarManitude, distance);
+                Double temperatures = SetTemperatures();
+                Double mass = SetMass();
+                star = new Star(name, hemisphere, constellation, declination1, rightAscension1, observedStellarManitude, SetAbsoluteStellarMagnitude(observedStellarManitude, distance), distance, temperatures, mass);
+                setCatalogName();
+                AppStart.listOfStar.add(this.star);
+                out.println("Twoja gwiazda została utworzona pomyślnie");
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+            } catch (NullPointerException e) {
+                System.err.println("Nie podano wszystkich danych");
+            } catch (IOException e) {
+                System.err.println("Błąd wejścia/wyjścia");
+            } catch (ClassNotFoundException e) {
+                System.err.println("Nie znaleziono klasy");
+            } catch (Exception e) {
+                System.err.println("Wystąpił nieznany błąd");
             }
         }
 
-        public void setConstellation(String constellation) {
-            star.constellation = constellation;
+        public String setName() {
+            do {
+                String name = " ";
+                try {
+                    out.println("Podaj nazwe gwiazdy skladajaca sie z 3 duzych liter i 4 cyfr");
+                    name = scanner.nextLine();
+                    if (name.matches("[A-Z]{3}[0-9]{4}")) {
+                        return name;
+                    } else {
+                        throw new IllegalArgumentException("Nazwa Gwiazdy jest nieprawidłowa, podaj prawidłową nazwę");
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                }
+            } while (true);
+        }
+
+        public String setHemisphere() {
+            do {
+                try {
+                    String hemisphere = null;
+                    System.out.println("Wpisz PD dla pólkuli poludniowej lub PN dla pólkuli pólnocnej");
+                    hemisphere = scanner.nextLine();
+                    if (hemisphere.equals("PN") || hemisphere.equals("PD")) {
+                        return hemisphere;
+                    } else {
+                        throw new IllegalArgumentException("Wrong star position. Try again: ");
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                }
+            } while (true);
+        }
+
+        public String setConstellation() {
+            String constellation = null;
+            do {
+                try {
+                    System.out.println("Podaj nazwe gwiazdozbioru");
+                    constellation = scanner.nextLine();
+                    if (constellation.matches("[a-zA-Z]+")) {
+                        return constellation;
+                    } else {
+                        throw new IllegalArgumentException("Podana nazwa gwiazdozbioru jest nieprawidłowa");
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                }
+            } while (true);
         }
 
         public void setCatalogName() throws IOException, ClassNotFoundException {
@@ -228,77 +234,163 @@ public class Star implements Serializable {
             return tempBrightesValue;
         }
 
-        public void SetDeclination(Declination declination) {
-            if (star.getHemisphere().equals("PN")) {
-                if (declination.getXx() < 0 || declination.getXx() > 90) {
-                    throw new IllegalArgumentException("Deklinacja musi być z przedziału 0-90");
-                } else if (declination.getYy() > 60 || declination.getYy() < 0) {
-                    throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
-                } else if (declination.getZz() > 60 || declination.getZz() < 0) {
-                    throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
-                } else if (declination.getXx() < 90 || declination.getXx() > 0) {
-                    star.declination = declination;
+        public Declination SetDeclination(String hemisphere) {
+            do {
+                try {
+                    String declinationString = null;
+                    out.println("Podaj deklinacje w formacie [XX,YY,ZZ.zz]\n XX - stopnie [0-90], YY - minuty [0-60], ZZ - sekundy[0.00-60.00]");
+                    declinationString = scanner.nextLine();
+                    String[] declinationArray = declinationString.split(",");
+                    Declination declination = new Declination(Integer.parseInt(declinationArray[0]), Integer.parseInt(declinationArray[1]), Double.parseDouble(declinationArray[2]));
+                    if (hemisphere.equals("PN")) {
+                        if (declination.getXx() < 0 || declination.getXx() > 90) {
+                            throw new IllegalArgumentException("Deklinacja musi być z przedziału 0-90");
+                        } else if (declination.getYy() > 60 || declination.getYy() < 0) {
+                            throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
+                        } else if (declination.getZz() > 60 || declination.getZz() < 0) {
+                            throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
+                        } else if (declination.getXx() < 90 || declination.getXx() > 0) {
+                            return declination;
+                        }
+                    } else if (hemisphere.equals("PD")) {
+                        if (declination.getXx() > 0 || declination.getXx() < -90) {
+                            throw new IllegalArgumentException("Deklinacja musi być z przedziału -90-0");
+                        } else if (declination.getYy() > 60 || declination.getYy() < 0) {
+                            throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
+                        } else if (declination.getZz() > 60 || declination.getZz() < 0) {
+                            throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
+                        } else if (declination.getXx() < 0 || declination.getXx() > -90) {
+                            return declination;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Podane dane są nieprawidłowe");
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Wystąpił nieznany błąd, sprawdz czy podałeś poprawną wartość");
                 }
-            } else if (star.getHemisphere().equals("PD")) {
-                if (declination.getXx() > 0 || declination.getXx() < -90) {
-                    throw new IllegalArgumentException("Deklinacja musi być z przedziału -90-0");
-                } else if (declination.getYy() > 60 || declination.getYy() < 0) {
-                    throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
-                } else if (declination.getZz() > 60 || declination.getZz() < 0) {
-                    throw new IllegalArgumentException("Trzymaj sie prawidłowych jednostek czasu");
-                } else if (declination.getXx() < 0 || declination.getXx() > -90) {
-                    star.declination = declination;
+
+            } while (true);
+        }
+
+        public RightAscension SetRightAscenios() {
+            do {
+                try {
+                    String rightAscensionString = null;
+                    out.println("Podaj rektascensje w formacie [XX,YY,ZZ]\n godziny [0-24], YY - minuty [0-60], ZZ - sekundy[0-60]");
+                    rightAscensionString = scanner.nextLine();
+                    String[] rightAscensionArray = rightAscensionString.split(",");
+                    RightAscension rightAscension = new RightAscension(Integer.parseInt(rightAscensionArray[0]), Integer.parseInt(rightAscensionArray[1]), Integer.parseInt(rightAscensionArray[2]));
+                    if (rightAscension.getXx() > 24 || rightAscension.getXx() < 0) {
+                        throw new IllegalArgumentException("Rekatascensja musi byc z przedziału 00-24");
+                    } else if (rightAscension.getYy() > 60 || rightAscension.getYy() < 0) {
+                        throw new IllegalArgumentException("Minuty musza byc z przedziału 0-60");
+                    } else if (rightAscension.getZz() > 60 || rightAscension.getZz() < 0) {
+                        throw new IllegalArgumentException("Sekundy musza byc z przedziału 0-60");
+                    } else if (rightAscension.getXx() > 0 && rightAscension.getXx() < 24) {
+                        return rightAscension;
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Podane dane są nieprawidłowe");
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Wystąpił nieznany błąd, sprawdz czy podałeś poprawną wartość");
                 }
-            }
+            } while (true);
         }
 
-        public void SetRightAscenios(RightAscension rightAscension) {
-            if (rightAscension.getXx() > 24 || rightAscension.getXx() < 0) {
-                throw new IllegalArgumentException("Rekatascensja musi byc z przedziału 00-24");
-            } else if (rightAscension.getYy() > 60 || rightAscension.getYy() < 0) {
-                throw new IllegalArgumentException("Minuty musza byc z przedziału 0-60");
-            } else if (rightAscension.getZz() > 60 || rightAscension.getZz() < 0) {
-                throw new IllegalArgumentException("Sekundy musza byc z przedziału 0-60");
-            } else if (rightAscension.getXx() > 0 && rightAscension.getXx() < 24) {
-                star.rightAscension = rightAscension;
-            }
+        public Double SetObservedStellarMagnitude() {
+            String stellarMagnitudeString = null;
+            do {
+                try {
+                    out.println("Podaj obserwowana wielkosc gwiazdy w zakresie [-26.74 - 15.00]");
+                    stellarMagnitudeString = scanner.nextLine();
+                    Double stellarMagnitude = Double.parseDouble(stellarMagnitudeString);
+                    if (stellarMagnitude >= -26.74 && stellarMagnitude <= 15.00) {
+                        return stellarMagnitude;
+                    } else {
+                        throw new IllegalArgumentException("Podana obserwowana wielkość gwiazdy jest poza zakresem");
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Podane dane są nieprawidłowe");
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Wystąpił nieznany błąd, sprawdz czy podałeś poprawną wartość");
+                }
+            } while (true);
         }
 
-        public void SetObservedStellarMagnitude(double stellarMagnitude) {
-            if (stellarMagnitude >= -26.74 && stellarMagnitude <= 15.00) {
-                star.observedStellarMagnitude = stellarMagnitude;
-            } else {
-                throw new IllegalArgumentException("Podana obserwowana wielkość gwiazdy jest poza zakresem");
-            }
+        public Double SetDistnce() { // ustala odleglosc w latach swietlnych
+            String distanceString = null;
+            do {
+                try {
+                    out.println("Podaj odleglosc w latach swietlnych");
+                    distanceString = scanner.nextLine();
+                    Double distance = Double.parseDouble(distanceString);
+                    if (distance < 0) {
+                        throw new IllegalArgumentException("Podana wartość nie może być ujemna");
+                    } else {
+                        return distance;
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Podane dane są nieprawidłowe");
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Wystąpił nieznany błąd, sprawdz czy podałeś poprawną wartość");
+                }
+            } while (true);
         }
 
-        public void SetDistnce(double distance) { // ustala odleglosc w latach swietlnych
-            if (distance < 0) {
-                throw new IllegalArgumentException("Wartość nie może być ujemna");
-            } else {
-                star.distance = distance;
-            }
+        public Double SetAbsoluteStellarMagnitude(Double observedStellarManitude, Double distance) { // oblicza absolutna wielkosc gwiazdy
+            return observedStellarManitude - (5 * Math.log10(distance / 3.26)) + 5;
         }
 
-        public void SetAbsoluteStellarMagnitude() { // oblicza absolutna wielkosc gwiazdy
-            star.absoluteStellarMagnitude = star.getObservedStellarMagnitude() - (5 * Math.log10(star.getdistance() / 3.26)) + 5;
+        public Double SetTemperatures() {
+            String temperaturesString = null;
+            do {
+                try {
+                    out.println("Podaj temperature gwiazdy w stopniach celcjusza (Temperatura musi byc wieksza niz 2000°C)");
+                    temperaturesString = scanner.nextLine();
+                    Double temperatures = Double.parseDouble(temperaturesString);
+                    if (temperatures <= 2000) {
+                        throw new IllegalArgumentException("Podana temperatura jest za niska!");
+                    } else {
+                        return temperatures;
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Podane dane są nieprawidłowe");
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Wystąpił nieznany błąd, sprawdz czy podałeś poprawną wartość");
+                }
+            } while (true);
         }
 
-        public void SetTemperatures(double temperatures) {
-            if (temperatures <= 2000) {
-                throw new IllegalArgumentException("Podana temperatura jest za niska!");
-            } else {
-                star.temperatures = temperatures;
-            }
+        public Double SetMass() {
+            String massString = null;
+            do {
+                try {
+                    out.println("Podaj mase gwiazdy w odnieisienu do masy słońca w zakresie [0.1-50.0]");
+                    massString = scanner.nextLine();
+                    Double mass = Double.parseDouble(massString);
+                    if (mass > 50 && mass < 0.1) {
+                        throw new IllegalArgumentException("Podana mass jest nieprawidłowa, prosze podać mase w zakresie [0.1-50.0]");
+                    } else {
+                        return mass;
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Podane dane są nieprawidłowe");
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Wystąpił nieznany błąd, sprawdz czy podałeś poprawną wartość");
+                }
+            } while (true);
         }
-
-        public void SetMass(double mass) {
-            if (mass > 50 && mass < 0.1) {
-                throw new IllegalArgumentException("Podana mass jest nieprawidłowa, prosze podać mase w zakresie [0.1-50.0]");
-            } else {
-                star.mass = mass;
-            }
-        }
-
     }
 }
