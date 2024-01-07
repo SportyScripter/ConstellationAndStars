@@ -1,19 +1,8 @@
 package SpaceObjects;
-
-import org.w3c.dom.css.ElementCSSInlineStyle;
-
-import java.util.List;
-import javax.swing.*;
-import javax.xml.xpath.XPath;
 import java.io.*;
-import java.sql.ClientInfoStatus;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-
 import static java.lang.System.*;
-
 
 public class Star implements Serializable {
     @Serial
