@@ -1,11 +1,5 @@
 package SpaceObjects;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.nio.channels.ScatteringByteChannel;
-import java.text.Format;
-
 import static SpaceObjects.AppStart.scanner;
 
 public class StarFinder {
@@ -19,7 +13,7 @@ public class StarFinder {
                 }
             }
             if (i == 0) {
-                throw new InvalidParameterException("No stars found in the specifield constellation");
+                throw new InvalidParameterException("Nie znaleziono gwiazdy w podanym gwiazdozbiorze");
             }
             return true;
         } catch (InvalidParameterException e) {
@@ -39,11 +33,11 @@ public class StarFinder {
                 }
             }
             if (i == 0) {
-                throw new InvalidParameterException("No stars found in the specifield Distance");
+                throw new InvalidParameterException("Nie znaleziono gwiazdy w podanym zakresie odległości");
             }
             return true;
         } catch (NumberFormatException e) {
-            System.err.println("Invalid input. Please enter a valid double value.");
+            System.err.println("Nieprawidłowe dane. Wprowadź poprawne dane.");
         } catch (InvalidParameterException e) {
             System.err.println(e.getMessage());
         }
@@ -61,11 +55,13 @@ public class StarFinder {
                 }
             }
             if (i == 0) {
-                throw new NoStarsFoundException("Invalid input. Please enter a valid value greater then 2000°C");
+                throw new NoStarsFoundException("Podana wartosc jest nieprawidlowa, Podana wartosc musi być wieksza niż 2000°C");
             }
             return true;
+        } catch (NumberFormatException e) {
+            System.err.println("Nieprawidłowe dane. Wprowadź poprawne dane.");
         } catch (IllegalArgumentException e) {
-            System.err.println("Invalid input. Please enter a valid double value.");
+            System.err.println("Nieprawidłowe dane. Wprowadź poprawne dane.");
         } catch (NoStarsFoundException e) {
             System.err.println(e.getMessage());
         }
@@ -89,20 +85,21 @@ public class StarFinder {
             }
             if (i == 0) // jesli nie znaleziono zadnej gwiazdy z podanego zakresu
             {
-                throw new NoStarsFoundException("No stars found in the specifield Absolute Stellar Magnitude");
+                throw new NoStarsFoundException("Nie znaleziono gwiazdy w podanym zakresie absolutnej wielkosci gwiazdowej");
             }
             return true;
+        } catch (NumberFormatException e) {
+            System.err.println("Nieprawidłowe dane. Wprowadź poprawne dane.");
         } catch (NoStarsFoundException e) {
             System.err.println(e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.err.println("Invalid input. Please enter a valid double value.");
+            System.err.println("Nieprawidłowe dane. Wprowadź poprawne dane.");
         }
         return false;
     }
 
     static void findPotentialSupernova() {
         try {
-
             int i = 0;
             for (Star star : AppStart.listOfStar) {
                 if (star.getmass() >= 1.44) {
@@ -111,7 +108,7 @@ public class StarFinder {
                 }
             }
             if (i == 0) {
-                throw new NoStarsFoundException("Potential supernova don't exist in the catalog");
+                throw new NoStarsFoundException("Nie znaleziono potencjalnych supernowych");
             }
         } catch (NoStarsFoundException e) {
             System.err.println(e.getMessage());
@@ -129,11 +126,11 @@ public class StarFinder {
                     }
                 }
                 if (i == 0) {
-                    throw new NoStarsFoundException("No stars found in the specifield Hemisphere");
+                    throw new NoStarsFoundException("Nie znaleziono gwiazdy w podanej półkuli");
                 }
                 return true;
             } else {
-                throw new InvalidParameterException("Invalid input. Please enter a valid value");
+                throw new InvalidParameterException("Nieprawidłowe dane. Wprowadź poprawne dane.");
             }
         } catch (NoStarsFoundException | InvalidParameterException e) {
             System.err.println(e.getMessage());

@@ -6,7 +6,6 @@ public class StarSerializer {
     {
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
                 outputStream.writeObject(object);
-                outputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }

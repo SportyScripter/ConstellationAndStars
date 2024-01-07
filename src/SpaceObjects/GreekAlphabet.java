@@ -1,6 +1,5 @@
 package SpaceObjects;
 public enum GreekAlphabet {
-    //Write greek alphabet here
     ALPHA("Alpha",  1),
     BETA("Beta",  2),
     GAMMA("Gamma",  3),
@@ -28,7 +27,6 @@ public enum GreekAlphabet {
 
     GreekAlphabet(String omega,  int i) {
     }
-
     public String getGreekAlphabet(int i ){
         GreekAlphabet[] greekAlphabets = GreekAlphabet.values();
         return greekAlphabets[i].toString();

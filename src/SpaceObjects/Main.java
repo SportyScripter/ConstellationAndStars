@@ -1,14 +1,16 @@
 package SpaceObjects;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        AppStart start = new AppStart();
+    public static void main(String[] args) {
+        try {
+            AppStart start = new AppStart();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
-//TODO Poprawic metode do obliczania masy gwiazdy w odnieseniu do masy słońca.
