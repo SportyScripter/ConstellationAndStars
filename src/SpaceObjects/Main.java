@@ -1,5 +1,4 @@
 package SpaceObjects;
-
 import java.io.*;
 
 

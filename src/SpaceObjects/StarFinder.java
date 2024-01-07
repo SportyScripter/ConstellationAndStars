@@ -1,5 +1,4 @@
 package SpaceObjects;
-
 import static SpaceObjects.AppStart.scanner;
 
 public class StarFinder {

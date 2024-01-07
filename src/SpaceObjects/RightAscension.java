@@ -1,5 +1,4 @@
 package SpaceObjects;
-
 import java.io.Serializable;
 
 public class RightAscension implements Serializable {
