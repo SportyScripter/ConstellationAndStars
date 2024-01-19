@@ -1,7 +1,7 @@
 package SpaceObjects;
 import java.io.*;
 
-
+// tutaj odpalamy cały nasz program wywołując konstruktor bezparametrowy klasy AppStart
 public class Main {
     public static void main(String[] args) {
         try {

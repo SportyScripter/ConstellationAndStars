@@ -1,4 +1,6 @@
 package SpaceObjects;
+//Alfabet grecki to ustawiania nazwy katalogowej gwiazdy
+
 public enum GreekAlphabet {
     ALPHA("Alpha",  1),
     BETA("Beta",  2),

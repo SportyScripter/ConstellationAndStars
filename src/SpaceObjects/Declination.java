@@ -1,5 +1,6 @@
 package SpaceObjects;
 import java.io.Serializable;
+// klasa jednej z 2 spółrzednych sferycznych gwiazdy
 
 public class Declination implements Serializable {
     private static final long serialVersionUID = 6433858223774886977L;

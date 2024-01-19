@@ -1,6 +1,6 @@
 package SpaceObjects;
 import java.io.Serializable;
-
+// klasa odpowiedzialna za ustawienie drugiej wspólrzednej gwiazdy
 public class RightAscension implements Serializable {
     private static final long serialVersionUID = 5162710183389028792L;
     private int xx;

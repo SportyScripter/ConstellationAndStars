@@ -3,7 +3,10 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 import static java.lang.System.*;
-
+// głowna klasa dzięki której możemy tworzyć nowe gwiazdy
+// skorzystałem tutaj ze wzroca projektowego builder
+// klasa jest serializowalna, aby można było zapisywać i odczytywać dane z pliku
+// klasa posiada prywatny konstruktor, aby nie można było utworzyć obiektu bez wykorzystania wzorca projektowego builder
 public class Star implements Serializable {
     @Serial
     private static final long serialVersionUID = -897856973823710492L;
@@ -23,7 +26,7 @@ public class Star implements Serializable {
 
     private Star() {
     }
-
+// prywatny konstruktor gdzie podajemy wszystkie dane aby stworzyć nową gwiazde
     private Star(String name, String hemisphere, String constellation, Declination declination, RightAscension rightAscension, Double observedStellarMagnitude, Double absoluteStellarMagnitude, Double distance, Double temperatures, Double mass) {
         this.name = name;
         this.hemisphere = hemisphere;
@@ -36,7 +39,7 @@ public class Star implements Serializable {
         this.temperatures = temperatures;
         this.mass = mass;
     }
-
+// getter'y i setter'y
     public int getCatalogIndex() {
         return catalogIndex;
     }
@@ -80,7 +83,7 @@ public class Star implements Serializable {
     public Double getmass() {
         return mass;
     }
-
+// przeciążona metoda toString aby można było wyśiwetlić wszystkie dane o gwiazdzie
     @Override
     public String toString() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
@@ -96,15 +99,15 @@ public class Star implements Serializable {
                 "\nStar Temperature: " + this.temperatures + "°C" +
                 "\nStar Mass: " + this.mass + "\n";
     }
-
+// wewnętrzna klasa builder, która jest odpowiedzialna za tworzenie nowych gwiazd
     static class StarBuilder implements Serializable {
         private static final long serialVersionUID = -9223365651070458532L;
         private Star star;
-
+// konstruktor bezparametrowy wywołuje metodę build
         public StarBuilder() {
             build();
         }
-
+// w konstruktorze ustawiamy wszystkie dane gwiazdy za pomocą metod klasy builder, gwiazda nie bedzie sworzona dopóki wszsystkie dane nie zostaną podane poprawnie
         public void build() {
             try {
                 String name = setName();
@@ -119,9 +122,9 @@ public class Star implements Serializable {
                 Double mass = SetMass();
                 star = new Star(name, hemisphere, constellation, declination1, rightAscension1, observedStellarManitude, SetAbsoluteStellarMagnitude(observedStellarManitude, distance), distance, temperatures, mass);
                 setCatalogName();
-                AppStart.listOfStar.add(this.star);
+                AppStart.listOfStar.add(this.star); // po stworzeniu gwiazdy dodajemy ja do listy
                 out.println("Twoja gwiazda została utworzona pomyślnie");
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) { // jesli podamy nieprawidłowe dane zostaną zgłoszone wyjątki i wyświetlone odpowiednie komunikaty
                 System.err.println(e.getMessage());
             } catch (NullPointerException e) {
                 System.err.println("Nie podano wszystkich danych");
@@ -140,7 +143,7 @@ public class Star implements Serializable {
                 try {
                     out.println("Podaj nazwe gwiazdy skladajaca sie z 3 duzych liter i 4 cyfr");
                     name = scanner.nextLine();
-                    if (name.matches("[A-Z]{3}[0-9]{4}")) {
+                    if (name.matches("[A-Z]{3}[0-9]{4}")) { // za pomocą patternu sprawdza czy podane dane przez użytkownika spełniają warunek
                         return name;
                     } else {
                         throw new IllegalArgumentException("Nazwa Gwiazdy jest nieprawidłowa, podaj prawidłową nazwę");
@@ -151,13 +154,13 @@ public class Star implements Serializable {
             } while (true);
         }
 
-        public String setHemisphere() {
+        public String setHemisphere() { // odpowiada za ustawienie półkuli
             do {
                 try {
                     String hemisphere = null;
                     System.out.println("Wpisz PD dla pólkuli poludniowej lub PN dla pólkuli pólnocnej");
                     hemisphere = scanner.nextLine();
-                    if (hemisphere.equals("PN") || hemisphere.equals("PD")) {
+                    if (hemisphere.equals("PN") || hemisphere.equals("PD")) { // sprawdza czy podane dane przez użytkownika spełniają warunek
                         return hemisphere;
                     } else {
                         throw new IllegalArgumentException("Wrong star position. Try again: ");
@@ -168,13 +171,13 @@ public class Star implements Serializable {
             } while (true);
         }
 
-        public String setConstellation() {
+        public String setConstellation() { // metoda odpawiada za ustawienie gwiazdozbioru
             String constellation = null;
             do {
                 try {
                     System.out.println("Podaj nazwe gwiazdozbioru");
                     constellation = scanner.nextLine();
-                    if (constellation.matches("[a-zA-Z]+")) {
+                    if (constellation.matches("[a-zA-Z]+")) { // sprawdza czy nie nazwa gwiazdozbioru sklada sie tylko z liter
                         return constellation;
                     } else {
                         throw new IllegalArgumentException("Podana nazwa gwiazdozbioru jest nieprawidłowa");
@@ -187,51 +190,51 @@ public class Star implements Serializable {
 
         public void setCatalogName() throws IOException, ClassNotFoundException {
             int i = 0;
-            if (!AppStart.listOfStar.isEmpty()) { // jesli lista nie jest pusta
+            if (!AppStart.listOfStar.isEmpty()) { // sprawdza czy lista nie jest pusta jeśli nie jest to wykonuje pętle
                 for (Star deserializerStar : AppStart.listOfStar) {
                     if (deserializerStar.constellation.equals(star.getConstellation())) { //wyszukanie wszystkich gwiazd w danym gwiazdozbiorze
                         i++;
                     }
                 }
-                if (star.getObservedStellarMagnitude() < findTheBrightestStar()) {
+                if (star.getObservedStellarMagnitude() < findTheBrightestStar()) { // porównuje obsarwowaną wielkość gwiazdy z najjaśniejszą gwiazdą w gwiazdozbiorze jeśli jest mniejsza to ustawia katalog indeks na 0 czyli Alpha
                     star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(0).concat(" ").concat(star.constellation);
                     star.setCatalogIndex(0); // ustawienie najjasniejszej gwiazdy na index 0
-                    for (Star deserializerStar : AppStart.listOfStar) {
-                        if (deserializerStar.constellation.equals(star.getConstellation())) {
+                    for (Star deserializerStar : AppStart.listOfStar) { // iteruje po wszystkich gwiazdach w gwiazdozbiorze
+                        if (deserializerStar.constellation.equals(star.getConstellation())) { // jesli gwiazda jest w tym samym gwiazdozbiorze podnosi jej index o 1 tym samym zmienia jej litere grecką w nazwie katalogowej na kolejną
                             deserializerStar.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(deserializerStar.getCatalogIndex() + 1).concat(" ").concat(deserializerStar.constellation);
                             deserializerStar.setCatalogIndex(deserializerStar.getCatalogIndex() + 1);  // zmiana indeksu katalogu na +1
                         }
                     }
                 } else {
-                    star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation); // jeśli gwiazda nie jest najjaśniejsza ustaw katalog indeks jako ostatni
+                    star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation); // jeśli gwiazda nie jest najjaśniejsza ustawia indeks jako ostatni i nazwe katalogową jako kolejną wolną litere grecką
                     star.setCatalogIndex(i);
                 }
             } else { // jesli lista jest pusta
-                star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation);
+                star.catalogName = GreekAlphabet.ALPHA.getGreekAlphabet(i).concat(" ").concat(star.constellation); // ustawia gwiazde jako pierwsza w gwiazdozbiorze
                 star.setCatalogIndex(i); // ustaw najjaśniejszą gwiazdę na index 0
             }
         }
 
-        private double findTheBrightestStar() {
-            double tempBrightesValue = 15.00;
+        private double findTheBrightestStar() { // metoda znajduje najjaśniejszą gwiazdę w gwiazdozbiorze
+            double tempBrightesValue = 15.00; // maksymalna wartość gwiazdy
             for (Star brightesStar : AppStart.listOfStar) {
-                if (brightesStar.constellation.equals(star.getConstellation())) {
-                    if (tempBrightesValue > brightesStar.observedStellarMagnitude)
-                        tempBrightesValue = brightesStar.observedStellarMagnitude;
+                if (brightesStar.constellation.equals(star.getConstellation())) { //wyszukanie wszystkich gwiazd w gwiazdozbiorze naszej gwiazdy
+                    if (tempBrightesValue > brightesStar.observedStellarMagnitude) // porównanie wartosci gwiazdy z zmienna lokalna
+                        tempBrightesValue = brightesStar.observedStellarMagnitude; // ustawia zmienna lokalna jako na wartość gwiazdy jaśniejszej
                 }
             }
-            return tempBrightesValue;
+            return tempBrightesValue; // zwraca wartość najjaśniejszej gwiazdy
         }
 
-        public Declination SetDeclination(String hemisphere) {
+        public Declination SetDeclination(String hemisphere) { // ustawia deklinacje jedna ze wspołrzednych gwiazdy
             do {
                 try {
                     String declinationString = null;
                     out.println("Podaj deklinacje w formacie [XX,YY,ZZ.zz]\n XX - stopnie [0-90], YY - minuty [0-60], ZZ - sekundy[0.00-60.00]");
                     declinationString = scanner.nextLine();
-                    String[] declinationArray = declinationString.split(",");
-                    Declination declination = new Declination(Integer.parseInt(declinationArray[0]), Integer.parseInt(declinationArray[1]), Double.parseDouble(declinationArray[2]));
-                    if (hemisphere.equals("PN")) {
+                    String[] declinationArray = declinationString.split(","); // rozdzela podane dane na tablice
+                    Declination declination = new Declination(Integer.parseInt(declinationArray[0]), Integer.parseInt(declinationArray[1]), Double.parseDouble(declinationArray[2])); // tworzy nowy obiekt deklinacji
+                    if (hemisphere.equals("PN")) { // sprawdza wartosci deklinacji dla półkuli
                         if (declination.getXx() < 0 || declination.getXx() > 90) {
                             throw new IllegalArgumentException("Deklinacja musi być z przedziału 0-90");
                         } else if (declination.getYy() > 60 || declination.getYy() < 0) {
@@ -241,7 +244,7 @@ public class Star implements Serializable {
                         } else if (declination.getXx() < 90 || declination.getXx() > 0) {
                             return declination;
                         }
-                    } else if (hemisphere.equals("PD")) {
+                    } else if (hemisphere.equals("PD")) { // sprawdza wartosci deklinacji dla półkuli
                         if (declination.getXx() > 0 || declination.getXx() < -90) {
                             throw new IllegalArgumentException("Deklinacja musi być z przedziału -90-0");
                         } else if (declination.getYy() > 60 || declination.getYy() < 0) {
@@ -263,7 +266,7 @@ public class Star implements Serializable {
             } while (true);
         }
 
-        public RightAscension SetRightAscenios() {
+        public RightAscension SetRightAscenios() { // metoda odpowiedzialna za ustawienie rektascensji jednej ze wspołrzednych gwiazdy działanie takie samo jak w przypadku deklinacji , tylko tutaj nie trzeba sprawdzac półkuli
             do {
                 try {
                     String rightAscensionString = null;
@@ -290,14 +293,14 @@ public class Star implements Serializable {
             } while (true);
         }
 
-        public Double SetObservedStellarMagnitude() {
+        public Double SetObservedStellarMagnitude() { // ustawianie obserwowanej wielkości gwiazdy
             String stellarMagnitudeString = null;
             do {
                 try {
                     out.println("Podaj obserwowana wielkosc gwiazdy w zakresie [-26.74 - 15.00]");
                     stellarMagnitudeString = scanner.nextLine();
                     Double stellarMagnitude = Double.parseDouble(stellarMagnitudeString);
-                    if (stellarMagnitude >= -26.74 && stellarMagnitude <= 15.00) {
+                    if (stellarMagnitude >= -26.74 && stellarMagnitude <= 15.00) { //sprawdza czy wartosci podane przez uzytkownika mieszczą sie w przedziale
                         return stellarMagnitude;
                     } else {
                         throw new IllegalArgumentException("Podana obserwowana wielkość gwiazdy jest poza zakresem");
@@ -319,12 +322,12 @@ public class Star implements Serializable {
                     out.println("Podaj odleglosc w latach swietlnych");
                     distanceString = scanner.nextLine();
                     Double distance = Double.parseDouble(distanceString);
-                    if (distance < 0) {
+                    if (distance < 0) { // wartosc nie moze byc ujemna
                         throw new IllegalArgumentException("Podana wartość nie może być ujemna");
                     } else {
                         return distance;
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException e) { // wyjatek kontrolujacy ze podane dane przez uzytkownika są prawidłowe i mozliwe do zparsowania
                     System.err.println("Podane dane są nieprawidłowe");
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getMessage());
@@ -338,7 +341,7 @@ public class Star implements Serializable {
             return observedStellarManitude - (5 * Math.log10(distance / 3.26)) + 5;
         }
 
-        public Double SetTemperatures() {
+        public Double SetTemperatures() { // ustawia temperature gwiazdy
             String temperaturesString = null;
             do {
                 try {
@@ -360,7 +363,7 @@ public class Star implements Serializable {
             } while (true);
         }
 
-        public Double SetMass() {
+        public Double SetMass() { // ustawia mase gwiazdy w stosunku do masy słońca podobne działanie jak w przypadku ustawiania temperatury, odległości i wielkości gwiazdy
             String massString = null;
             do {
                 try {

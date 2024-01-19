@@ -17,18 +17,18 @@ public class AppStart {
 
     public AppStart() throws IOException, ClassNotFoundException {
         try {
-            createFile(fileName);
+            createFile(fileName); //tworzy plik jesli nie istnieje
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        if (!ChecFileIsEmpty(fileName)) {
-            listOfStar = (List<Star>) StarSerializer.deserializeStar(fileName);
+        if (!ChecFileIsEmpty(fileName)) { // sprawdza czy plik jest pusty
+            listOfStar = (List<Star>) StarSerializer.deserializeStar(fileName); // jesli są w nim jakies dany to je deserializuje i zapisuje do listy
         }
         do {
-            showMenu();
+            showMenu(); // wyswietlenie menu
             switch (key) {
                 case "1":
-                    Star.StarBuilder starBuilder = new Star.StarBuilder();
+                    Star.StarBuilder starBuilder = new Star.StarBuilder(); // tworzy obiekt budowniczego gwiazdy
                     break;
                 case "2":
                     String consentrationName = null;
@@ -36,10 +36,10 @@ public class AppStart {
                         System.out.println(' ');
                         System.out.println("Podaj nazwe gwiazdozbioru lub wpisz exit aby wyjsc");
                         consentrationName = scanner.nextLine();
-                        if (!consentrationName.equals("exit") && StarFinder.findStarInConstellation(consentrationName)) {
+                        if (!consentrationName.equals("exit") && StarFinder.findStarInConstellation(consentrationName)) { // wywołuje metode wyszukującą gwiazdy w podanym gwiazdozbiorze
                             break;
                         }
-                    } while (!consentrationName.equals("exit"));
+                    } while (!consentrationName.equals("exit")); // działa dopóki nie wpiszemy exit
                     break;
                 case "3":
                     String distance = null;
@@ -47,10 +47,10 @@ public class AppStart {
                         System.out.println(' ');
                         System.out.println("Podaj odleglosc w Parsekach (Uwaga! 1 parsek to 3.26 lat świetlnych) lub wpisz exit aby wyjsc");
                         distance = scanner.nextLine();
-                        if (!distance.equals("exit") && StarFinder.findStarsBySpecificDistance(distance)) {
+                        if (!distance.equals("exit") && StarFinder.findStarsBySpecificDistance(distance)) { // wywoałanie metody wyszukującej gwiazdy w podanym zakresie odległości
                             break;
                         }
-                    } while (!distance.equals("exit"));
+                    } while (!distance.equals("exit")); // działa dopóki nie wpiszemy exit
                     break;
                 case "4":
                     String temperatures = null;
@@ -58,10 +58,10 @@ public class AppStart {
                         System.out.println(' ');
                         System.out.println("Podaj temperature w stopniach celcjusza  lub wpisz exit aby wyjsc");
                         temperatures = scanner.nextLine();
-                        if (!temperatures.equals("exit") && StarFinder.findStarsBySpecificTemperature(temperatures)) {
+                        if (!temperatures.equals("exit") && StarFinder.findStarsBySpecificTemperature(temperatures)) { // wywoałanie metody wyszukującej gwiazdy w podanym zakresie temperatury
                             break;
                         }
-                    } while (!temperatures.equals("exit"));
+                    } while (!temperatures.equals("exit")); // działa dopóki nie wpiszemy exit
                     break;
                 case "5":
                     String mminValueAbsolutSetllarMagnitude = null;
@@ -69,13 +69,13 @@ public class AppStart {
                         System.out.println(' ');
                         System.out.println("Podaj minimalna wartość absolutnej wielkosci gwiazdowej lub wpisz exit aby wyjsc");
                         mminValueAbsolutSetllarMagnitude = scanner.nextLine();
-                        if (!mminValueAbsolutSetllarMagnitude.equals("exit") && StarFinder.findStarBySpecificAbsoluteStellarMagnitude(mminValueAbsolutSetllarMagnitude)) {
+                        if (!mminValueAbsolutSetllarMagnitude.equals("exit") && StarFinder.findStarBySpecificAbsoluteStellarMagnitude(mminValueAbsolutSetllarMagnitude)) { //wywoałanie metody wyszukującej gwiazdy w podanym zakresie absolutnej wielkości gwiazdowej
                             break;
                         }
-                    } while (!mminValueAbsolutSetllarMagnitude.equals("exit"));
+                    } while (!mminValueAbsolutSetllarMagnitude.equals("exit")); // działa dopoóki nie wpiszemy exit
                     break;
                 case "6":
-                    StarFinder.findPotentialSupernova();
+                    StarFinder.findPotentialSupernova(); // wywoałanie metody wyszukującej potencjalne supernowe
                     break;
                 case "7":
                     String hemisphere = null;
@@ -83,10 +83,10 @@ public class AppStart {
                         System.out.println(' ');
                         System.out.println("Wpisz PD dla pólkuli poludniowej lub PN dla pólkuli pólnocnej lub wpisz exit aby wyjsc");
                         hemisphere = scanner.nextLine();
-                        if (!hemisphere.equals("exit") && StarFinder.findStarsBySpecificHemisphere(hemisphere)) {
+                        if (!hemisphere.equals("exit") && StarFinder.findStarsBySpecificHemisphere(hemisphere)) { // wywoałanie metody wyszukującej gwiazdy w podanej półkuli
                             break;
                         }
-                    } while (!hemisphere.equals("exit"));
+                    } while (!hemisphere.equals("exit"));// działa pokóki nie wpiszemy exit
                     break;
                 case "8":
                     do {
@@ -96,8 +96,8 @@ public class AppStart {
                             String greekLetterStar = scanner.nextLine();
                             System.out.println("Podaj nazwe gwiazdozbioru gwiazdy ktora chcesz usunąć lub wpisz exit aby wyjsc");
                             String constellationName = scanner.nextLine();
-                            if (!greekLetterStar.equals("exit") || !constellationName.equals("exit")) {
-                                StarRemover.DeleteStar(greekLetterStar, constellationName);
+                            if (!greekLetterStar.equals("exit") || !constellationName.equals("exit")) { // sprawdza czy podane dane nie są exi
+                                StarRemover.DeleteStar(greekLetterStar, constellationName); // wywoałanie metody usuwającej gwiazde
                                 break;
                             }
                         } catch (IllegalArgumentException e) {
@@ -105,14 +105,13 @@ public class AppStart {
                         } catch (NoStarsFoundException e) {
                             System.err.println(e.getMessage());
                         }
-                    } while (true);
+                    } while (true); // działa dopoki nie wpiszemy exit
             }
-        } while (!key.equals("exit"));
-//        listOfStar.clear();
-        StarSerializer.serializerStar(fileName, (Serializable) listOfStar);
+        } while (!key.equals("exit")); // działa dopóki nie wpiszemy exit
+        StarSerializer.serializerStar(fileName, (Serializable) listOfStar); // po wpisaniu exit serializuje liste do pliku
     }
 
-
+// meotda wywołująca menu
     public void showMenu() {
         System.out.println("******Menu*****");
         System.out.println("1.Dodaj Gwiazde");
@@ -129,6 +128,7 @@ public class AppStart {
         key = scanner.nextLine();
     }
 
+// metoda sprawdzająca czy plik jest pusty i zwraca typ boolean
     public Boolean ChecFileIsEmpty(String path) {
         File file = new File(path);
         if (file.length() == 0) {
@@ -136,9 +136,9 @@ public class AppStart {
         } else return false;
     }
 
+// metoda tworząca plik jako parametr przyjmuje nazwe pliku
     public static void createFile(String fileName) throws IOException {
         Path filePath = Paths.get(fileName);
-
         try {
             Files.createFile(filePath);
             System.out.println("Plik " + fileName + " został pomyślnie utworzony.");
